@@ -1,19 +1,17 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 20;
+	box-sizing: border-box;
 }
 
 body {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: rgba(46, 184, 41, 0.219);
+    color: blueviolet;
+
 }
 
 #game-canvas {
-    width: 800px;
-    height: 600px;
-    border: solid 1px black;
+	width: 800px;
+	height: 600px;
+	border: solid 1px black;
 }
