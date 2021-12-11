@@ -1,2 +1,1 @@
-guchi mama
-jyciytc
+dont sue me rick
