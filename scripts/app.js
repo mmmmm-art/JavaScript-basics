@@ -8,7 +8,8 @@ canvas.height = 800;
 
 const BackMusic = new Audio("/sounds/BackMusic.mp3");
 const jumpMusic = new Audio("/sounds/jump.mp3");
-const dieMusic = new Audio("/sounds/die.mp3");
+const die = new Audio("/sounds/die.mp3");
+const dieMusic = new Audio("/sounds/dieA.mp3");
 const NeverGonnaGive = new Audio("/sounds/Never.mp3");
 BackMusic.play();
 BackMusic.loop =true;
@@ -324,8 +325,8 @@ class Player {
 
             if(isDead)
             {
-                dieMusic.play();
-                BackMusic.playbackRate -= 0.4;
+                BackMusic.pause();
+                die.play();
                 // @ts-ignore
                 this.trace.opacity = 0;
             }
@@ -354,8 +355,8 @@ class Player {
 
         if (this.y > canvas.height + 50)
         {
+            BackMusic.pause();
             dieMusic.play();
-            BackMusic.playbackRate -= 0.4;
             // @ts-ignore
             this.trace.opacity = 0;
         }
