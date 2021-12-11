@@ -6,6 +6,13 @@ const ctx = canvas.getContext("2d");
 canvas.width = 1400;
 canvas.height = 800;
 
+const BackMusic = new Audio("/sounds/BackMusic.mp3");
+const jumpMusic = new Audio("/sounds/jump.mp3");
+const dieMusic = new Audio("/sounds/die.mp3");
+const NeverGonnaGive = new Audio("/sounds/Never.mp3");
+BackMusic.play();
+BackMusic.loop =true;
+
 /**
  * @param {number} pt
  */
@@ -90,13 +97,11 @@ class Game {
 		this.scoreY = 95;
         this.wireUpListeners();
         this.bgImage = new Image();
-		this.bgImage.src = "/images/background.png";
-		this.imageWidth = canvas.width;
+		this.bgImage.src = "/images/back1.png";
 		this.imageX = 0;
         this.bgImage2 = new Image();
-		this.bgImage2.src = "/images/background.png";
-        this.imageWidth2 = canvas.width;
-		this.imageX2 = this.imageX + this.imageWidth;
+		this.bgImage2.src = "/images/back2.png";
+		this.imageX2 = this.imageX + this.bgImage.width;
         this.shipImage = new Image();
 		this.shipImage.src = `/images/ship.png`;
         this.shipImageX = 700;
@@ -156,13 +161,13 @@ class Game {
         this.imageX -= this.speed / 5;
         this.imageX2 -= this.speed / 5;
 
-        if (this.imageX + this.imageWidth < player.x - canvas.width * 0.25)
+        if (this.imageX + this.bgImage.width < 0)
         {
-            this.imageX = this.imageX2 + this.imageWidth2;
+            this.imageX = this.imageX2 + this.bgImage2.width;
         }
-        if (this.imageX2 + this.imageWidth2 < player.x - canvas.width * 0.25)
+        if (this.imageX2 + this.bgImage2.width < 0)
         {
-            this.imageX2 = this.imageX + this.imageWidth;
+            this.imageX2 = this.imageX + this.bgImage.width;
         }
 
 
@@ -204,8 +209,8 @@ class Game {
 
 	render() {
         ctx.save();
-        ctx.drawImage(this.bgImage, this.imageX, 0, this.imageWidth, 800);
-        ctx.drawImage(this.bgImage2, this.imageX2, 0, this.imageWidth2, 800);
+        ctx.drawImage(this.bgImage, this.imageX, 0, this.bgImage.width, 800);
+        ctx.drawImage(this.bgImage2, this.imageX2, 0, this.bgImage.width, 800);
         ctx.drawImage(this.shipImage, this.shipImageX, this.shipImageY);
 
         ctx.restore();
@@ -224,7 +229,8 @@ class Game {
 			// @ts-ignore
 			let p = e.detail;
 			if (p.isScoreable && !p.isScored) {
-				this.score += Math.round(Math.random() * 1 + 4);
+				this.score += Math.round(Math.random() * 4 + 1);
+                jumpMusic.play();
 				p.isScored = true;
 			}
 
@@ -318,6 +324,8 @@ class Player {
 
             if(isDead)
             {
+                dieMusic.play();
+                BackMusic.playbackRate -= 0.4;
                 // @ts-ignore
                 this.trace.opacity = 0;
             }
@@ -326,10 +334,16 @@ class Player {
         if (this.key.devTool)
         {
             this.opacity = 0;
+            this.canJump = true;
+            BackMusic.pause();
+            NeverGonnaGive.play();
         }
         else 
         {
             this.opacity = 1;
+            BackMusic.play();
+            BackMusic.loop =true;
+            NeverGonnaGive.pause();
         }
 
         if (this.key.devTool && this.y > canvas.height)
@@ -340,6 +354,8 @@ class Player {
 
         if (this.y > canvas.height + 50)
         {
+            dieMusic.play();
+            BackMusic.playbackRate -= 0.4;
             // @ts-ignore
             this.trace.opacity = 0;
         }
@@ -637,6 +653,10 @@ class ScorePlatform {
 		this.isScoreable = true;
         this.color = 120;
         this.isIncreasing = false;
+        this.scoreImage = new Image();
+		this.scoreImage.src = "/images/score.png";
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 	}
 
 	/**
@@ -646,6 +666,8 @@ class ScorePlatform {
 	update(elapsedTime) {
 		this.x -= this.game.speed;
 		this.isVisible = this.x + this.width > 0;
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 
         if(this.color >= 150)
         {
@@ -663,11 +685,16 @@ class ScorePlatform {
         {
             this.color -= 1;
         }
+
+        
 	}
 
 	render() {
+        ctx.save();
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.restore();
 		ctx.save();
-		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 1)`;
+		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 0.5)`;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.restore();
 	}
@@ -688,6 +715,10 @@ class negativePlatform {
 		this.negScoreable = true;
         this.color = 15;
         this.isIncreasing = false;
+        this.scoreImage = new Image();
+		this.scoreImage.src = "/images/score.png";
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 	}
 
 	/**
@@ -697,6 +728,8 @@ class negativePlatform {
 	update(elapsedTime) {
 		this.x -= this.game.speed;
 		this.isVisible = this.x + this.width > 0;
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 
         if(this.color >= 35)
         {
@@ -718,7 +751,10 @@ class negativePlatform {
 
 	render() {
 		ctx.save();
-		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 1)`;
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.restore();
+		ctx.save();
+		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 0.5)`;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.restore();
 	}
@@ -758,16 +794,18 @@ class killPlatform {
 }
 
 class PlatformManager {
-	constructor(platforms, game) {
+	constructor(platforms, killers, game) {
 		this.platforms = platforms;
 		this.game = game;
+        this.killers = killers
 	}
 
 	update() {
 		let lastPlatform = platforms[platforms.length - 1];
+        let lastKill = killers[killers.length - 1] || new killPlatform(this.game);
 		let furthestX = lastPlatform.x + lastPlatform.width;
+        let furthestKiller = lastKill.x + lastKill.width;
 
-       
 		while (furthestX < canvas.width * 2) {
 			let spacerX = Math.floor(Math.random() * 268 + 64);
             let spacerY = Math.floor(Math.random() * 350 + 400);
@@ -798,16 +836,35 @@ class PlatformManager {
 			}
             else {p = new SafePlatform(this.game);}
 
-            
 
 			p.x = furthestX + spacerX;
             p.y = spacerY;
 			this.platforms.push(p);
 			furthestX += spacerX + p.width;
 		}
+        
+        while (furthestKiller < canvas.width * 2)
+       {
+        let spacerKX = Math.floor(Math.random() * 400 + 200);
+        let spacerKY = Math.floor(Math.random() * 350 + 400);
+
+        let k = new killPlatform(this.game);
+
+        k.x = furthestKiller + spacerKX;
+        k.y = spacerKY;
+        let overLap = this.platforms.filter((p) => {
+            p.x >= k.x && p.x + p.width <= k.x     
+        })
+        if(overLap.length)
+        {
+            k.x += 50;
+        }
+        this.killers.push(k);
+		furthestKiller += spacerKX + k.width;
+
+       }
 	}
 }
-
 
 let kb = new KeyboardState();
 let game = new Game(kb);
@@ -815,7 +872,7 @@ let game = new Game(kb);
 
 let platforms = [new SafePlatform(game)];
 let killers = [];
-let pm = new PlatformManager(platforms, game);
+let pm = new PlatformManager(platforms, killers, game);
 let player = new Player(platforms, killers, kb);
 let tracers = [new Tracer(player, game)];
 
