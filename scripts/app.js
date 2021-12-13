@@ -11,8 +11,10 @@ const jumpMusic = new Audio("/sounds/jump.mp3");
 const die = new Audio("/sounds/die.mp3");
 const dieMusic = new Audio("/sounds/dieA.mp3");
 const NeverGonnaGive = new Audio("/sounds/Never.mp3");
+const pain = new Audio("/souns/backwards.mp3");
+const gg = new Audio("/sounds/jump2.mp3");
 BackMusic.play();
-BackMusic.loop =true;
+BackMusic.loop = true;
 
 /**
  * @param {number} pt
@@ -110,6 +112,10 @@ class Game {
         this.shipSpeed = 2;
         this.shipSpeedY = 1;
         this.upOdown = Math.random();
+        this.shipImage2 = new Image();
+		this.shipImage2.src = "/images/space.png";
+        this.shipImage2X = 700;
+        this.shipImage2Y = 400;
 	}
 
 	/**
@@ -175,10 +181,12 @@ class Game {
         if (this.speed > 0)
         {
             this.shipImageX -= this.shipSpeed;
+            this.shipImage2X -= this.shipSpeed;
         }
         if (this.speed <= 0)
         {
             this.shipImageX += this.shipSpeed;
+            this.shipImage2X += this.shipSpeed;
         }
         if (this.shipImageX < -200)
         {
@@ -196,12 +204,30 @@ class Game {
             this.shipSpeedY = Math.random() * 3;
             this.upOdown = Math.random();
         }
+        if (this.shipImage2X < -2000)
+        {
+            this.shipImageX = 1600;
+            this.shipImageY = Math.random() * 700;
+            this.shipSpeed = Math.random() * 20 + 1;
+            this.shipSpeedY = Math.random() * 3;
+            this.upOdown = Math.random();
+        }
+        if (this.shipImage2X > canvas.width + 2000)
+        {
+            this.shipImage2X = -200;
+            this.shipImage2Y = Math.random() * 700;
+            this.shipSpeed = Math.random() * 20 + 1;
+            this.shipSpeedY = Math.random() * 3;
+            this.upOdown = Math.random();
+        }
         if (this.upOdown >= 0.5)
         {
             this.shipImageY += this.shipSpeedY;
+            this.shipImage2Y += this.shipSpeedY;
         }
         else if (this.upOdown < 0.5)
         {
+            this.shipImageY -= this.shipSpeedY;
             this.shipImageY -= this.shipSpeedY;
         }
         
@@ -213,7 +239,7 @@ class Game {
         ctx.drawImage(this.bgImage, this.imageX, 0, this.bgImage.width, 800);
         ctx.drawImage(this.bgImage2, this.imageX2, 0, this.bgImage.width, 800);
         ctx.drawImage(this.shipImage, this.shipImageX, this.shipImageY);
-
+        ctx.drawImage(this.shipImage2, this.shipImage2X, this.shipImage2Y);
         ctx.restore();
 
         ctx.save();
@@ -366,6 +392,7 @@ class Player {
             this.timeSinceLastBounce = 0;
 			this.yOfLastBounce = this.y;
             this.canJump = false;
+            gg.play();
         }
 	}
 
@@ -769,11 +796,13 @@ class killPlatform {
 		this.game = g;
 		this.width = 32;
 		this.height = canvas.height;
-
 		this.x = 0;
 		this.y = canvas.height - 100;
-
 		this.isVisible = true;
+        this.scoreImage = new Image();
+		this.scoreImage.src = "/images/score.png";
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 
 	}
 
@@ -784,11 +813,16 @@ class killPlatform {
 	update(elapsedTime) {
 		this.x -= this.game.speed;
 		this.isVisible = this.x + this.width > 0;
+        this.scoreImageX = this.x;
+        this.scoreImageY = this.y;
 	}
 
 	render() {
 		ctx.save();
-		ctx.fillStyle = "hsla(0, 100%, 50%, 1)";
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.restore();
+		ctx.save();
+		ctx.fillStyle = `hsla(0, 100%, 50%, 0.5)`;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.restore();
 	}
