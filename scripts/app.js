@@ -672,7 +672,7 @@ class ScorePlatform {
 	 */
 	constructor(g) {
 		this.game = g;
-		this.width = 32;
+		this.width = Math.random() * 45 + 5;
 		this.height = canvas.height;
 		this.x = 0;
 		this.y = canvas.height - 100;
@@ -685,6 +685,7 @@ class ScorePlatform {
 		this.scoreImage.src = "/images/score.png";
         this.scoreImageX = this.x;
         this.scoreImageY = this.y;
+        this.scoreImageWidth = this.width;
 	}
 
 	/**
@@ -719,7 +720,7 @@ class ScorePlatform {
 
 	render() {
         ctx.save();
-        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY, this.scoreImageWidth, canvas.height);
         ctx.restore();
 		ctx.save();
 		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 0.5)`;
@@ -734,7 +735,7 @@ class negativePlatform {
 	 */
 	constructor(g) {
 		this.game = g;
-		this.width = 32;
+		this.width = Math.random() * 45 + 5;
 		this.height = canvas.height;
 		this.x = 0;
 		this.y = canvas.height - 100;
@@ -747,6 +748,7 @@ class negativePlatform {
 		this.scoreImage.src = "/images/score.png";
         this.scoreImageX = this.x;
         this.scoreImageY = this.y;
+        this.scoreImageWidth = this.width;
 	}
 
 	/**
@@ -779,7 +781,7 @@ class negativePlatform {
 
 	render() {
 		ctx.save();
-        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY, this.scoreImageWidth, canvas.height);
         ctx.restore();
 		ctx.save();
 		ctx.fillStyle = `hsla(${this.color}, 100%, 50%, 0.5)`;
@@ -794,7 +796,7 @@ class killPlatform {
 	 */
 	constructor(g) {
 		this.game = g;
-		this.width = 32;
+		this.width = Math.random() * 45 + 5;
 		this.height = canvas.height;
 		this.x = 0;
 		this.y = canvas.height - 100;
@@ -803,6 +805,7 @@ class killPlatform {
 		this.scoreImage.src = "/images/score.png";
         this.scoreImageX = this.x;
         this.scoreImageY = this.y;
+        this.scoreImageWidth = this.width;
 
 	}
 
@@ -819,7 +822,7 @@ class killPlatform {
 
 	render() {
 		ctx.save();
-        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY);
+        ctx.drawImage(this.scoreImage, this.scoreImageX, this.scoreImageY, this.scoreImageWidth, canvas.height);
         ctx.restore();
 		ctx.save();
 		ctx.fillStyle = `hsla(0, 100%, 50%, 0.5)`;
